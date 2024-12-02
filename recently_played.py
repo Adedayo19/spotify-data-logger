@@ -53,5 +53,5 @@ def print_dataframe():
 #   print_dataframe()
 
 print_dataframe_deployment = print_dataframe.to_deployment(
-    name='Create Recently Played Datafarame', cron="40 20 * * *")
+    name='Create Recently Played Datafarame', cron="00 21 * * *")
 
