@@ -4,9 +4,10 @@ import pandas as pd
 from prefect.blocks.system import Secret
 from prefect import task, flow
 
-secret_block = Secret.load('spotify-client-secret')
-SPOTIFY_CLIENT_ID = 'fbea17b0f8344dfd8af04f8dc450842b'
-SPOTIFY_CLIENT_SECRET = secret_block.get()
+secret_block1 = Secret.load('spotify-client-secret')
+secret_block2 = Secret.load('my-spotify-client-id')
+SPOTIFY_CLIENT_ID = secret_block2.get()
+SPOTIFY_CLIENT_SECRET = secret_block1.get()
 SPOTIFY_REDIRECT_URI = 'http://localhost:8080/callback'
 SCOPE = 'user-read-recently-played'
 pd.set_option('display.max_columns', None)
@@ -20,7 +21,7 @@ def get_recently_played():
         redirect_uri=SPOTIFY_REDIRECT_URI,
         scope='user-read-recently-played'
     ))
-    results = sp.current_user_recently_played(limit=10)
+    results = sp.current_user_recently_played(limit=50)
     return [
         {
             'played_at': track['played_at'],
@@ -37,10 +38,8 @@ def get_recently_played():
 def create_dataframe(data):
     # Create a DataFrame from the list of track data
     df = pd.DataFrame(data)
-
     # Convert 'played_at' to a datetime object
     df['played_at'] = pd.to_datetime(df['played_at'])
-    print(df)
     return df
 
 @flow
@@ -50,6 +49,9 @@ def print_dataframe():
     print(f"Created DataFrame with {len(df)} tracks.")
     print(df)
 
+#if __name__ == "__main__":
+#   print_dataframe()
+
 print_dataframe_deployment = print_dataframe.to_deployment(
-    name='Create Recently Played Datafarame', cron="00 14 * * *")
+    name='Create Recently Played Datafarame', cron="40 20 * * *")
 
