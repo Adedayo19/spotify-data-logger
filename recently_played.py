@@ -120,6 +120,7 @@ def update_recently_played():
 if __name__ == "__main__":
     update_recently_played()
 
+
 #print_dataframe_deployment = print_dataframe.to_deployment(
  #   name='Create Recently Played Datafarame', cron="00 21 * * *")
 
